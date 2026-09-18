@@ -1,0 +1,32 @@
+id: frontend-web-v1
+version: 1.0.0
+profile: frontend-web
+requires: core-v1
+scope: browser and frontend application areas
+total_weight: 40
+applies_when:
+  evidence_any: [UI components, browser entry points, frontend routes, client state, hooks or lifecycle APIs, frontend framework configuration]
+categories:
+  - id: frontend_responsibility
+    name: Component / Module Responsibility
+    weight: 10
+    verifies: [component responsibility, UI and domain policy boundary, cohesion, coupling, reuse of components hooks utilities and API clients]
+  - id: frontend_state
+    name: State Ownership
+    weight: 10
+    verifies: [source of truth, derived state, duplicated state, stale state, global versus local ownership]
+  - id: frontend_async_lifecycle
+    name: Async / Lifecycle Correctness
+    weight: 10
+    verifies: [stale requests, async races, duplicate fetching, effect semantics, cleanup, cancellation, timers and listeners]
+  - id: frontend_architecture
+    name: Frontend Architecture
+    weight: 10
+    verifies: [framework-aligned boundaries, change isolation, unnecessary wrappers or hooks, cross-component coupling]
+prohibitions:
+  - missing memo or useCallback as a finding without demonstrated impact
+  - render count or component size alone as a finding
+  - prop drilling as an automatic defect
+  - Java class or interface rules imposed on JavaScript or TypeScript
+  - lint, formatting, naming, or stylistic preference as scoring evidence
+

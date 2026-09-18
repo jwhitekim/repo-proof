@@ -1,0 +1,13 @@
+fixture: sync-code-valid
+profiles: [core, backend-general, python-backend]
+must_find: []
+must_not_find:
+  - {concept: asyncio-required}
+  - {concept: convert-to-async}
+  - {concept: multiprocessing-required}
+  - {concept: worker-count-too-low}
+  - {concept: sync-code-is-blocking}
+  - {concept: redis-not-used}
+forbidden_categories: []
+expected_claims: []
+maximum_false_positives: 0

@@ -1,0 +1,13 @@
+fixture: async-code-valid
+profiles: [core, backend-general, node-backend]
+must_find: []
+must_not_find:
+  - {concept: async-implies-race}
+  - {concept: worker-threads-required}
+  - {concept: promise-architecture-change}
+  - {concept: concurrency-problem}
+  - {concept: missing-cancellation}
+  - {concept: redis-not-used}
+forbidden_categories: []
+expected_claims: []
+maximum_false_positives: 0

@@ -1,0 +1,11 @@
+fixture: asyncio-blocking-io
+profiles: [core, backend-general, python-backend]
+findings:
+  - id: RP-PY-001
+    title: Blocking URL fetch occupies the request event loop
+    category: network_io
+    concepts: [event-loop-blocking, blocking-io-in-async-path]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["app.py:exchange_rate_handler", "app.py:urllib.request.urlopen"]
+claims: []

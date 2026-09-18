@@ -1,0 +1,14 @@
+fixture: duplicate-service
+profiles: [core]
+findings:
+  - id: RP-REPO-001
+    title: Quick checkout duplicates the established discount policy
+    category: repository_understanding
+    concepts: [duplicate-responsibility, existing-abstraction-ignored, single-source-of-truth]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence:
+      - src/main/java/dev/repoproof/discount/DiscountPolicy.java
+      - src/main/java/dev/repoproof/discount/StandardDiscountPolicy.java
+      - src/main/java/dev/repoproof/discount/QuickCheckoutService.java
+claims: []

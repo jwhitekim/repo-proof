@@ -1,0 +1,15 @@
+fixture: n-plus-one
+profiles: [core, backend-general, spring-backend]
+must_find:
+  - category: database
+    concepts: [n-plus-one, lazy-association-access-path]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 3
+must_not_find:
+  - {concept: lazy-is-always-n-plus-one}
+  - {concept: index-required-for-every-query}
+  - {concept: eager-fetch-required}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

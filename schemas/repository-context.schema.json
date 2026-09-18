@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-proof.local/schemas/repository-context.schema.json",
+  "title": "RepoProof Repository Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository", "mode", "revision", "stack", "areas", "modules", "boundaries", "major_domains", "build", "persistence", "cache", "concurrency_components", "existing_abstractions", "common_utilities", "common_components", "hooks", "important_services", "domain_modules", "repositories", "external_integrations", "entry_paths", "execution_risks", "technical_claims", "change_scope", "evidence", "limitations"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "repository": {
+      "type": "object", "additionalProperties": false,
+      "required": ["url", "owner", "name", "workspace"],
+      "properties": {"url": {"type": "string", "format": "uri"}, "owner": {"type": "string"}, "name": {"type": "string"}, "workspace": {"type": "string"}}
+    },
+    "mode": {"enum": ["AUDIT", "CHANGE"]},
+    "revision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["head"],
+      "properties": {"base": {"type": ["string", "null"]}, "head": {"type": "string"}, "merge_base": {"type": ["string", "null"]}}
+    },
+    "stack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["languages", "frameworks"],
+      "properties": {"languages": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "frameworks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}}
+    },
+    "areas": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/area"}},
+    "modules": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "boundaries": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "major_domains": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "build": {
+      "type": "object", "additionalProperties": false,
+      "required": ["systems", "descriptors", "unsafe_or_unknown_tasks"],
+      "properties": {"systems": {"type": "array", "items": {"type": "string"}}, "descriptors": {"type": "array", "items": {"type": "string"}}, "unsafe_or_unknown_tasks": {"type": "array", "items": {"type": "string"}}}
+    },
+    "persistence": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "cache": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "concurrency_components": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "existing_abstractions": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "common_utilities": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "common_components": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "hooks": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "important_services": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "domain_modules": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "repositories": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "external_integrations": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "entry_paths": {"type": "array", "items": {"$ref": "#/$defs/path"}},
+    "execution_risks": {"type": "array", "items": {"$ref": "#/$defs/risk"}},
+    "technical_claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "change_scope": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/changeScope"}]},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "allOf": [
+    {"if": {"properties": {"mode": {"const": "AUDIT"}}}, "then": {"properties": {"change_scope": {"type": "null"}}}},
+    {"if": {"properties": {"mode": {"const": "CHANGE"}}}, "then": {"properties": {"change_scope": {"$ref": "#/$defs/changeScope"}, "revision": {"required": ["base", "head", "merge_base"]}}}}
+  ],
+  "$defs": {
+    "area": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "kind", "profiles", "languages", "frameworks", "modules", "evidence_ids"],
+      "properties": {
+        "id": {"type": "string"},
+        "path": {"type": "string"},
+        "kind": {"enum": ["FRONTEND", "BACKEND", "SHARED", "MIXED", "UNKNOWN"]},
+        "profiles": {"type": "array", "minItems": 1, "uniqueItems": true, "contains": {"const": "core"}, "items": {"enum": ["core", "frontend-web", "backend-general", "spring-backend", "python-backend", "node-backend"]}},
+        "languages": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "frameworks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "modules": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}}
+      },
+      "allOf": [
+        {"if": {"properties": {"profiles": {"contains": {"enum": ["spring-backend", "python-backend", "node-backend"]}}}}, "then": {"properties": {"profiles": {"contains": {"const": "backend-general"}}}}}
+      ]
+    },
+    "component": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "locations", "responsibility", "evidence_ids"],
+      "properties": {"name": {"type": "string"}, "locations": {"type": "array", "items": {"type": "string"}}, "responsibility": {"type": "string"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}
+    },
+    "path": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "steps", "evidence_ids"],
+      "properties": {"name": {"type": "string"}, "steps": {"type": "array", "items": {"type": "string"}}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}
+    },
+    "risk": {
+      "type": "object", "additionalProperties": false,
+      "required": ["location", "trigger", "risk", "evidence_ids"],
+      "properties": {"location": {"type": "string"}, "trigger": {"type": "string"}, "risk": {"type": "string"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "text", "location", "evidence_ids"],
+      "properties": {"id": {"type": "string"}, "text": {"type": "string"}, "location": {"type": "string"}, "area_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "location", "observation"],
+      "properties": {"id": {"type": "string"}, "kind": {"enum": ["CODE", "CONFIG", "DOC", "TEST", "HISTORY"]}, "location": {"type": "string"}, "observation": {"type": "string"}}
+    },
+    "changeScope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_ref", "head_ref", "changed_files", "added_files", "modified_files", "renamed_files", "deleted_files", "diff", "pre_change_capabilities"],
+      "properties": {
+        "base_ref": {"type": "string"}, "head_ref": {"type": "string"},
+        "changed_files": {"type": "array", "items": {"type": "string"}}, "added_files": {"type": "array", "items": {"type": "string"}},
+        "modified_files": {"type": "array", "items": {"type": "string"}}, "renamed_files": {"type": "array", "items": {"type": "string"}},
+        "deleted_files": {"type": "array", "items": {"type": "string"}}, "diff": {"type": "string"},
+        "pre_change_capabilities": {"type": "array", "items": {"$ref": "#/$defs/component"}}
+      }
+    }
+  }
+}

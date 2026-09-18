@@ -1,0 +1,9 @@
+workspaces/*
+!workspaces/.gitkeep
+reports/*
+!reports/.gitkeep
+.DS_Store
+*.log
+**/target/
+calibration/results/*
+!calibration/results/.gitkeep

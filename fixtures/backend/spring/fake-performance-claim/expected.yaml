@@ -1,0 +1,16 @@
+fixture: fake-performance-claim
+profiles: [core, backend-general, spring-backend]
+must_find:
+  - category: observability
+    concepts: [unsupported-performance-claim, implementation-is-not-measurement]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 3
+must_not_find:
+  - {concept: redis-proves-performance}
+  - {concept: caching-is-always-good}
+  - {concept: verified-without-measurement}
+forbidden_categories: []
+expected_claims:
+  - {id: redis-80-percent, status: UNVERIFIED}
+maximum_false_positives: 0

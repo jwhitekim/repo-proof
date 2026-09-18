@@ -1,0 +1,16 @@
+fixture: duplicate-service
+profiles: [core]
+must_find:
+  - category: repository_understanding
+    concepts: [duplicate-responsibility, existing-abstraction-ignored, single-source-of-truth]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 3
+must_not_find:
+  - {concept: missing-interface}
+  - {concept: factory-required}
+  - {concept: redis-not-used}
+  - {concept: class-too-large}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

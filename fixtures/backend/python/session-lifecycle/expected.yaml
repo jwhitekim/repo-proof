@@ -1,0 +1,17 @@
+fixture: session-lifecycle
+profiles: [core, backend-general, python-backend]
+must_find:
+  - category: database
+    concepts: [unclosed-db-session, request-session-lifecycle]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 2
+must_not_find:
+  - {concept: async-db-driver-required}
+  - {concept: orm-required}
+  - {concept: connection-pool-required}
+  - {concept: index-required-for-every-query}
+  - {concept: redis-not-used}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

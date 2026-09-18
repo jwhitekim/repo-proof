@@ -1,0 +1,11 @@
+fixture: event-loop-blocking
+profiles: [core, backend-general, node-backend]
+findings:
+  - id: RP-NODE-001
+    title: Request handler performs expensive synchronous key derivation
+    category: cs_fundamentals
+    concepts: [event-loop-blocking, synchronous-cpu-hot-path]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["handler.js:passwordPreviewHandler", "handler.js:pbkdf2Sync-2000000"]
+claims: []

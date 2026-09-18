@@ -1,0 +1,14 @@
+fixture: n-plus-one
+profiles: [core, backend-general, spring-backend]
+findings:
+  - id: RP-DB-001
+    title: Customer listing dereferences each lazy orders collection
+    category: database
+    concepts: [n-plus-one, lazy-association-access-path]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence:
+      - src/main/java/dev/repoproof/orders/CustomerRepository.java
+      - src/main/java/dev/repoproof/orders/Customer.java
+      - src/main/java/dev/repoproof/orders/CustomerQueryService.java
+claims: []

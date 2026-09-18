@@ -1,0 +1,11 @@
+fixture: node-shared-library
+profiles: [core]
+must_find: []
+must_not_find:
+  - {concept: node-implies-backend}
+  - {concept: worker-threads-required}
+  - {concept: async-handler-required}
+  - {category: cs_fundamentals}
+forbidden_categories: [cs_fundamentals, database, transaction_concurrency, network_io, application_performance, caching_distributed, observability]
+expected_claims: []
+maximum_false_positives: 0

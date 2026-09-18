@@ -1,0 +1,33 @@
+id: backend-v1
+version: 2.0.0
+profile: backend-general
+requires: core-v1
+scope: backend, service, worker, persistence, and systems-facing repository areas
+language_neutral: true
+total_weight: 60
+applicability:
+  statuses: [APPLICABLE, N_A]
+  decide_per_area_before_scoring: true
+  n_a_requires: [reason, evidence]
+  absence_of_optional_technology_is_neutral: true
+categories:
+  - {id: cs_fundamentals, name: CS Fundamentals, weight: 12}
+  - {id: database, name: Database / Query / Index, weight: 10}
+  - {id: transaction_concurrency, name: Transaction / Concurrency / Lock, weight: 10}
+  - {id: network_io, name: Network / I/O / Resource Management, weight: 8}
+  - {id: application_performance, name: Application Performance, weight: 8}
+  - {id: caching_distributed, name: Cache / Distributed Concerns, weight: 6}
+  - {id: observability, name: Observability / Measurement, weight: 6}
+inspection_scope:
+  cs_fundamentals: [algorithms, data structures, time and space complexity, event loops, workers, resource bounds]
+  database: [query shape, indexes, constraints, pagination, execution evidence]
+  transaction_concurrency: [atomicity, isolation, races, locks, idempotency, consistency]
+  network_io: [timeouts, retries, partial failure, I/O lifecycle, pools, backpressure]
+  application_performance: [hot paths, batching, serialization, allocation, worker and pool interaction]
+  caching_distributed: [suitability, keys, invalidation, stampede, fallback, source of truth]
+  observability: [metrics, logs, traces, latency, throughput, errors, reproducible claims]
+prohibitions:
+  - requiring Redis, locks, async, indexes, queues, or a database when the area has no evidenced need
+  - treating implementation presence as performance proof
+  - micro-optimization without materiality
+  - applying backend-only categories to frontend or shared-only areas

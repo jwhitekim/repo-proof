@@ -1,0 +1,15 @@
+fixture: lost-update
+profiles: [core, backend-general, spring-backend]
+must_find:
+  - category: transaction_concurrency
+    concepts: [lost-update, check-then-act]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 3
+must_not_find:
+  - {concept: pessimistic-lock-required}
+  - {concept: lock-required-for-every-transaction}
+  - {concept: transaction-annotation-is-proof}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

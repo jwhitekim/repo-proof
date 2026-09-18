@@ -1,0 +1,30 @@
+id: python-backend-v1
+version: 1.0.0
+profile: python-backend
+specializes: backend-v1
+requires: [core-v1, backend-v1]
+scope: additional verification gates for Python backend, worker, and service areas
+applies_when:
+  language: Python
+  evidence_any: [ASGI application, WSGI application, backend route, worker or consumer, persistence or external-service integration]
+adds_scoring_categories: false
+inspection_gates:
+  cs_fundamentals:
+    inspect: [asyncio task lifecycle, blocking work on event loop, cancellation, bounded queues, GIL implications, process and worker model]
+  database:
+    inspect: [ORM evaluation and loading, session lifecycle, sync versus async driver, connection pool, bulk operations, transaction ownership]
+  transaction_concurrency:
+    inspect: [unit-of-work scope, concurrent coroutine interleaving, task-local context, atomic database operations, worker retry and idempotency]
+  network_io:
+    inspect: [client timeout, retry and cancellation, response and session cleanup, blocking library inside async path, file and stream lifecycle]
+  application_performance:
+    inspect: [CPU-bound work under GIL, serialization, worker count, blocking ratio, process memory duplication, batching]
+  observability:
+    inspect: [async error visibility, worker and process aggregation, request and task context propagation]
+python_specific_cautions:
+  - An async function does not prove its operations are non-blocking.
+  - The GIL does not make threads universally wrong; distinguish I/O-bound and CPU-bound work and runtime implementation.
+  - A synchronous framework path is not defective merely for being synchronous; relate it to worker capacity and workload.
+  - ORM attribute access or queryset construction alone does not establish query count; trace evaluation and access.
+  - Missing Celery, asyncio, multiprocessing, or an async driver is not a finding without an evidenced need.
+

@@ -1,0 +1,11 @@
+fixture: session-lifecycle
+profiles: [core, backend-general, python-backend]
+findings:
+  - id: RP-PYDB-001
+    title: Request-created database connections are never closed
+    category: database
+    concepts: [unclosed-db-session, request-session-lifecycle]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["app.py:user_handler", "app.py:sqlite3.connect"]
+claims: []

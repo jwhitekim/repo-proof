@@ -1,0 +1,11 @@
+fixture: stream-backpressure
+profiles: [core, backend-general, node-backend]
+findings:
+  - id: RP-NODEIO-002
+    title: Flowing file stream ignores response backpressure
+    category: network_io
+    concepts: [stream-backpressure, ignored-write-signal]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["handler.js:createReadStream", "handler.js:data-listener", "handler.js:unchecked-response-write"]
+claims: []

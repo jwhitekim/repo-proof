@@ -1,0 +1,29 @@
+id: node-backend-v1
+version: 1.0.0
+profile: node-backend
+specializes: backend-v1
+requires: [core-v1, backend-v1]
+scope: additional verification gates for Node.js backend, worker, and service areas
+applies_when:
+  runtime: Node.js
+  evidence_any: [HTTP server, backend route, worker or consumer, persistence or external-service integration]
+adds_scoring_categories: false
+inspection_gates:
+  cs_fundamentals:
+    inspect: [event-loop blocking, promise lifecycle, unhandled rejection, timer and listener lifecycle, worker or process model, bounded queues]
+  database:
+    inspect: [ORM query evaluation, eager or batched loading, transaction client scope, pool lifecycle, bulk operations]
+  transaction_concurrency:
+    inspect: [async interleaving, check-then-act, transaction callback scope, idempotency, competing processes or consumers]
+  network_io:
+    inspect: [timeouts, AbortSignal or cancellation, stream backpressure, response and socket cleanup, retry and partial failure]
+  application_performance:
+    inspect: [synchronous CPU work on event loop, serialization, worker threads or processes, pool and concurrency interaction]
+  observability:
+    inspect: [promise and background-task errors, request context propagation, process and worker aggregation]
+node_specific_cautions:
+  - A single JavaScript event loop does not eliminate races across awaited steps, requests, workers, or processes.
+  - A promise not awaited is not automatically wrong; prove that ownership, error handling, or lifecycle is lost.
+  - Synchronous APIs are findings only on reachable paths where blocking is material.
+  - Missing worker threads, clustering, streams, or AbortController is not a finding without an evidenced need.
+  - ORM method names and declared relations do not prove query count; trace evaluation and access paths.

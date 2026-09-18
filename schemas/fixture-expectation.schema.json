@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-proof.local/schemas/fixture-expectation.schema.json",
+  "title": "RepoProof Fixture Expectation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixture", "profiles", "must_find", "must_not_find", "expected_claims", "maximum_false_positives"],
+  "properties": {
+    "fixture": {"type": "string"},
+    "profiles": {"type": "array", "minItems": 1, "uniqueItems": true, "contains": {"const": "core"}, "items": {"enum": ["core", "frontend-web", "backend-general", "spring-backend", "python-backend", "node-backend"]}},
+    "must_find": {"type": "array", "items": {"$ref": "#/$defs/mustFind"}},
+    "must_not_find": {"type": "array", "items": {"$ref": "#/$defs/mustNotFind"}},
+    "expected_claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "forbidden_categories": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "maximum_false_positives": {"type": "integer", "minimum": 0}
+  },
+  "$defs": {
+    "mustFind": {
+      "type": "object", "additionalProperties": false,
+      "required": ["category", "concepts", "minimum_confidence", "allowed_verification_levels", "minimum_evidence"],
+      "properties": {
+        "category": {"type": "string"},
+        "concepts": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "minimum_confidence": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+        "allowed_verification_levels": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["VERIFIED", "CODE_PROVEN", "SUSPECTED"]}},
+        "minimum_evidence": {"type": "integer", "minimum": 1}
+      }
+    },
+    "mustNotFind": {
+      "type": "object", "additionalProperties": false, "minProperties": 1,
+      "properties": {"concept": {"type": "string"}, "category": {"type": "string"}, "title_pattern": {"type": "string"}}
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "status"],
+      "properties": {"id": {"type": "string"}, "status": {"enum": ["VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED", "CONTRADICTED"]}}
+    }
+  }
+}

@@ -1,0 +1,14 @@
+fixture: lost-update
+profiles: [core, backend-general, spring-backend]
+findings:
+  - id: RP-TX-001
+    title: Concurrent reservations can overwrite the same inventory version
+    category: transaction_concurrency
+    concepts: [lost-update, check-then-act]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence:
+      - src/main/java/dev/repoproof/inventory/ReservationService.java
+      - src/main/java/dev/repoproof/inventory/Inventory.java
+      - src/main/java/dev/repoproof/inventory/InventoryRepository.java
+claims: []

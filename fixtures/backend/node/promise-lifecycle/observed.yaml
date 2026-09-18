@@ -1,0 +1,11 @@
+fixture: promise-lifecycle
+profiles: [core, backend-general, node-backend]
+findings:
+  - id: RP-NODEIO-001
+    title: Audit rejection loses ownership after the response ends
+    category: network_io
+    concepts: [unowned-promise, rejection-after-request]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["handler.js:auditClient.record", "handler.js:throw-on-non-ok", "handler.js:response-202-end"]
+claims: []

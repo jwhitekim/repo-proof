@@ -1,0 +1,30 @@
+id: spring-backend-v1
+version: 2.0.0
+profile: spring-backend
+specializes: backend-v1
+requires: [core-v1, backend-v1]
+scope: additional verification gates for Spring, Spring Boot, Spring Data JPA, and Hibernate backend areas
+applies_when:
+  any: [Spring Framework, Spring Boot, Spring Data JPA, Hibernate]
+adds_scoring_categories: false
+inspection_gates:
+  repository_understanding:
+    inspect: [domain methods, application services, repository implementations, utilities, extension points, module boundaries]
+    reject_shortcuts: [text-only duplication, convention preference without repository evidence]
+  design_integrity:
+    inspect: [invariant ownership, dependency direction, layer responsibility, public API growth, speculative abstractions]
+  database:
+    inspect: [entity mappings, generated query shape, fetch plans, constraints, migrations, pagination, index-workload fit]
+    evidence_for_index_claim: [query shape, data distribution, selectivity, workload, execution plan or explicit missing evidence]
+  transaction_concurrency:
+    inspect: [proxy boundary, self-invocation, propagation, rollback rules, isolation assumptions, check-then-act, atomic alternatives, lock scope and order]
+  application_performance:
+    inspect: [JPA work, batching, executors, blocking IO, worker and connection-pool interaction]
+  caching_distributed:
+    inspect: [Spring cache activation, key ownership, TTL rationale, invalidation, fallback, source of truth]
+spring_specific_cautions:
+  - An annotation is not proof that its proxy semantics apply at the call site.
+  - LAZY or EAGER alone does not prove or eliminate N+1; trace access and query paths.
+  - A repository method name does not establish SQL cost.
+  - Locking is justified only by a demonstrated contention or invariant model.
+  - Async annotations require executor, queue, rejection, context, and blocking-character analysis.

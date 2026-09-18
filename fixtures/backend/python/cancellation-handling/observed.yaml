@@ -1,0 +1,11 @@
+fixture: cancellation-handling
+profiles: [core, backend-general, python-backend]
+findings:
+  - id: RP-PYIO-001
+    title: Timed-out exports retain the file and continue after the request
+    category: network_io
+    concepts: [cancellation-resource-leak, task-outlives-request]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence: ["app.py:destination.open", "app.py:asyncio.shield", "app.py:TimeoutError-return"]
+claims: []

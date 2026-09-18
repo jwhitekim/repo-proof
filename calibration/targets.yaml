@@ -1,0 +1,7 @@
+targets:
+  - name: spring-petclinic
+    repository: https://github.com/spring-projects/spring-petclinic
+    commit: 818c4136ea971c21674525f9053de0d9c7ad8cfe
+    rationale: Public Spring Boot reference application for contextual finding and false-positive review, not a score oracle.
+    pinned_at: 2026-09-17
+

@@ -1,0 +1,42 @@
+id: core-v1
+version: 1.0.0
+profile: core
+scope: evidence-based software engineering verification applied to every analyzable repository area
+total_weight: 40
+principles:
+  technology_presence_has_value: false
+  style_findings_score: false
+  tests_alone_earn_points: false
+  deductions_require_finding_ids: true
+  positive_credit_requires_evidence_ids: true
+  language_idioms_are_context: true
+applicability:
+  statuses: [APPLICABLE, N_A]
+  decide_per_area_before_scoring: true
+  n_a_requires: [reason, evidence]
+normalization:
+  formula: round(100 * applicable_earned_weight / applicable_max_weight, 1)
+  unit: area-profile-category assessment
+categories:
+  - id: repository_understanding
+    name: Repository Understanding
+    weight: 12
+    verifies: [existing capability reuse, semantic duplication, extension points, module boundaries, single source of truth]
+  - id: design_integrity
+    name: Design Integrity
+    weight: 10
+    verifies: [responsibility, cohesion, coupling, encapsulation, dependency direction, abstraction quality, change isolation]
+  - id: change_discipline
+    name: Change Discipline
+    weight: 10
+    verifies: [scope proportionality, unnecessary redesign, public surface growth, repository convention consequences]
+  - id: code_quality
+    name: Code Quality
+    weight: 8
+    verifies: [maintainable control and data flow, contract clarity, error and resource handling, local complexity with demonstrated cost]
+prohibitions:
+  - lint, formatting, naming, or line count as a scoring finding
+  - interface absence as a design defect
+  - language-independent application of Java or SOLID idioms
+  - credit for technology or pattern count
+

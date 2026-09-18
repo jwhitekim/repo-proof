@@ -1,0 +1,4 @@
+fixture: node-shared-library
+profiles: [core]
+findings: []
+claims: []

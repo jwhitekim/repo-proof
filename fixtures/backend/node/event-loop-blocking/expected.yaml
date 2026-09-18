@@ -1,0 +1,16 @@
+fixture: event-loop-blocking
+profiles: [core, backend-general, node-backend]
+must_find:
+  - category: cs_fundamentals
+    concepts: [event-loop-blocking, synchronous-cpu-hot-path]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 2
+must_not_find:
+  - {concept: every-sync-api-is-blocking-problem}
+  - {concept: worker-threads-required}
+  - {concept: async-handler-required}
+  - {concept: redis-not-used}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

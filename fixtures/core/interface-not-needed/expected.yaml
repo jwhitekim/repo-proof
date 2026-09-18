@@ -1,0 +1,11 @@
+fixture: interface-not-needed
+profiles: [core]
+must_find: []
+must_not_find:
+  - {concept: missing-interface}
+  - {concept: dip-requires-interface}
+  - {concept: factory-required}
+  - {concept: class-too-small}
+forbidden_categories: []
+expected_claims: []
+maximum_false_positives: 0

@@ -1,0 +1,24 @@
+target: replace-with-target-name
+commit: replace-with-pinned-commit
+reviewed_at: YYYY-MM-DD
+reviewer: replace-with-reviewer
+findings:
+  - finding_id: RP-EXAMPLE-001
+    area_path: server/
+    profile: backend-general
+    disposition: needs_more_evidence
+    reason: Explain whether the root problem, category, evidence, and certainty are defensible.
+    evidence_notes: List supporting or missing repository/runtime evidence.
+    duplicate_of: null
+missed_findings:
+  - category: database
+    area_path: server/
+    profile: backend-general
+    concept: example-concept
+    evidence_notes: Explain the concrete missed path and why it should be a finding.
+summary:
+  valid: 0
+  false_positive: 0
+  needs_more_evidence: 1
+  duplicate: 0
+  unclear: 0

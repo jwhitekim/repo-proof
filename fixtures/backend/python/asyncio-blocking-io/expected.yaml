@@ -1,0 +1,17 @@
+fixture: asyncio-blocking-io
+profiles: [core, backend-general, python-backend]
+must_find:
+  - category: network_io
+    concepts: [event-loop-blocking, blocking-io-in-async-path]
+    minimum_confidence: HIGH
+    allowed_verification_levels: [CODE_PROVEN]
+    minimum_evidence: 2
+must_not_find:
+  - {concept: async-function-is-blocking}
+  - {concept: any-sync-call-is-blocking}
+  - {concept: multiprocessing-required}
+  - {concept: worker-count-too-low}
+  - {concept: redis-not-used}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

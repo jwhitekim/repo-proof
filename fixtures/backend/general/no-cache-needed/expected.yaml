@@ -1,0 +1,11 @@
+fixture: no-cache-needed
+profiles: [core, backend-general]
+must_find: []
+must_not_find:
+  - {concept: redis-not-used}
+  - {concept: cache-required}
+  - {concept: caching-is-always-good}
+  - {category: caching_distributed}
+forbidden_categories: [caching_distributed]
+expected_claims: []
+maximum_false_positives: 0

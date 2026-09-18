@@ -1,0 +1,16 @@
+fixture: fake-performance-claim
+profiles: [core, backend-general, spring-backend]
+findings:
+  - id: RP-OBS-001
+    title: The claimed 80 percent cache improvement has no measurement
+    category: observability
+    concepts: [unsupported-performance-claim, implementation-is-not-measurement]
+    confidence: HIGH
+    verification_level: CODE_PROVEN
+    evidence:
+      - README.md
+      - src/main/java/dev/repoproof/catalog/ProductCatalogService.java
+      - src/main/java/dev/repoproof/catalog/CacheConfig.java
+claims:
+  - id: redis-80-percent
+    status: UNVERIFIED

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-proof.local/schemas/scorecard.schema.json",
+  "title": "RepoProof Scorecard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository", "mode", "revision", "rubric", "overall", "categories", "evidence_coverage", "runtime_verification", "finding_counts", "claims"],
+  "properties": {
+    "schema_version": {"enum": ["1.0", "2.0"]},
+    "repository": {"type": "string"},
+    "mode": {"enum": ["AUDIT", "CHANGE"]},
+    "revision": {"type": "object", "required": ["head"], "properties": {"base": {"type": ["string", "null"]}, "head": {"type": "string"}}, "additionalProperties": false},
+    "rubric": {"type": "string"},
+    "selected_profiles": {"type": "array", "uniqueItems": true, "items": {"enum": ["core", "frontend-web", "backend-general", "spring-backend", "python-backend", "node-backend"]}},
+    "overall": {"type": "object", "required": ["normalized_score", "applicable_earned", "applicable_max"], "properties": {"normalized_score": {"type": "number", "minimum": 0, "maximum": 100}, "applicable_earned": {"type": "number", "minimum": 0}, "applicable_max": {"type": "number", "exclusiveMinimum": 0}}, "additionalProperties": false},
+    "categories": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/category"}},
+    "evidence_coverage": {"type": "number", "minimum": 0, "maximum": 100},
+    "runtime_verification": {"enum": ["NONE", "PARTIAL", "FULL"]},
+    "finding_counts": {"type": "object", "required": ["CRITICAL", "HIGH", "MEDIUM", "LOW"], "properties": {"CRITICAL": {"type": "integer", "minimum": 0}, "HIGH": {"type": "integer", "minimum": 0}, "MEDIUM": {"type": "integer", "minimum": 0}, "LOW": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": "2.0"}}},
+      "then": {
+        "required": ["selected_profiles"],
+        "properties": {
+          "categories": {
+            "items": {
+              "allOf": [
+                {"$ref": "#/$defs/category"},
+                {"required": ["profile", "area_path"]}
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "category": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "weight", "status", "finding_ids", "positive_evidence_ids", "rationale"],
+      "properties": {
+        "id": {"type": "string"}, "profile": {"enum": ["core", "frontend-web", "backend-general", "spring-backend", "python-backend", "node-backend"]}, "area_path": {"type": "string"}, "weight": {"type": "number", "exclusiveMinimum": 0},
+        "status": {"enum": ["APPLICABLE", "N_A"]}, "earned": {"type": ["number", "null"], "minimum": 0},
+        "finding_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "positive_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "rationale": {"type": "string", "minLength": 10}
+      }
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "text", "location", "status", "evidence_ids", "missing_evidence"],
+      "properties": {"id": {"type": "string"}, "text": {"type": "string"}, "location": {"type": "string"}, "area_path": {"type": "string"}, "profile": {"enum": ["core", "frontend-web", "backend-general", "spring-backend", "python-backend", "node-backend"]}, "status": {"enum": ["VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED", "CONTRADICTED"]}, "evidence_ids": {"type": "array", "items": {"type": "string"}}, "missing_evidence": {"type": "array", "items": {"type": "string"}}}
+    }
+  }
+}
