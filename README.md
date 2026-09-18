@@ -1,5 +1,7 @@
 # RepoProof
 
+[한국어](README_KO.md) | English
+
 > RepoProof does not ask: **“Does this code work?”**  
 > RepoProof asks: **“Did this implementation respect the existing repository, make sound engineering decisions, and can those decisions be justified with evidence?”**
 
@@ -79,7 +81,61 @@ Each category can be `N/A` with reason and evidence. Category assessments are ke
 6. Finalize area/category applicability, evidence confidence, claim status, and scoring.
 7. Generate reports grouped by the profiles actually present.
 
-Use `scripts/audit-target.sh <github-url>` for preparation. The normative protocol is [`docs/orchestration.md`](docs/orchestration.md). Specialists share [`repository-context.schema.json`](schemas/repository-context.schema.json) and do not independently rediscover the whole repository.
+## Usage
+
+RepoProof is currently an agent-driven verification project, not a standalone analyzer CLI. The shell scripts prepare a target safely; a Codex agent then follows `AGENTS.md`, the skills, and the orchestration protocol to produce the analysis.
+
+### Repository Audit
+
+From the RepoProof root, prepare a GitHub repository:
+
+```sh
+./scripts/audit-target.sh https://github.com/OWNER/REPOSITORY.git
+```
+
+This validates the URL, clones into `workspaces/<owner>-<repository>/`, and prepares `reports/<repository>/`. It does **not** install dependencies, build, run tests, start containers, or execute target code.
+
+Then ask Codex to perform the audit:
+
+```text
+Audit https://github.com/OWNER/REPOSITORY.git in Repository Audit mode.
+Follow AGENTS.md and docs/orchestration.md and generate the final reports.
+```
+
+If the workspace already exists, the clone helper stops instead of overwriting it. Deliberately move or remove the old workspace before preparing the same repository again.
+
+### Change Review
+
+Provide a prepared repository and an explicit comparison range:
+
+```text
+Run RepoProof Change Review for workspaces/OWNER-REPOSITORY.
+Base: main
+Head: feature/payment
+Evaluate introduced or worsened engineering decisions, not general PR bugs.
+```
+
+Commit SHAs can be used instead of branch names. Change Review records the base, head, merge base, diff, changed files, and pre-change capabilities before specialist verification.
+
+### Fixture regression
+
+Run all checked-in fixture contracts:
+
+```sh
+./scripts/run-fixtures.sh
+```
+
+To compare newly generated fixture projections:
+
+```sh
+./scripts/run-fixtures.sh --results <results-directory>
+```
+
+The supplied directory must contain `<fixture-name>/regression.yaml`. The harness checks required and forbidden findings, profiles, categories, confidence, verification levels, claim status, and unexpected findings.
+
+### Outputs
+
+Successful audits write:
 
 ```text
 reports/<repository>/
@@ -89,6 +145,8 @@ reports/<repository>/
 ├── scorecard.json
 └── evidence.json
 ```
+
+The normative execution contract is [`docs/orchestration.md`](docs/orchestration.md). Specialists share [`repository-context.schema.json`](schemas/repository-context.schema.json) and do not independently rediscover the whole repository.
 
 ## Security
 
