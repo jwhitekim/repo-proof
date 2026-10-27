@@ -1,163 +1,45 @@
 # RepoProof
 
-[한국어](README_KO.md) | English
+RepoProof is an agent-driven reviewer for engineering decisions. Instead of asking whether code works, it checks whether an implementation reuses what the repository already has, keeps responsibilities and state in the right place, and backs its technical claims with evidence.
 
-> RepoProof does not ask: **“Does this code work?”**  
-> RepoProof asks: **“Did this implementation respect the existing repository, make sound engineering decisions, and can those decisions be justified with evidence?”**
+It ships Codex skills, scoring rubrics, finding schemas, and regression fixtures.
 
-RepoProof is an evidence-based software engineering verifier for repositories. It evaluates repository understanding, responsibility, dependency and state ownership, abstraction quality, change discipline, maintainability, and technical claims. It is not a lint tool, formatter, naming checker, generic bug review, or pattern-counting SOLID checklist.
+## What it checks
 
-## Core plus area profiles
+- **Repository context:** existing capabilities, extension points, boundaries, change scope
+- **Design:** responsibility, dependencies, abstractions, control flow, contracts
+- **Area-specific:** frontend state and lifecycle; backend data access, concurrency, I/O, caching, performance
 
-Every analyzable area receives the Core profile. Recon then adds profiles to evidenced areas instead of assigning one type to the whole repository:
+Core checks apply to every analyzable area. Frontend and Backend profiles apply where repository evidence supports them. Spring, Python, and Node.js specializations refine Backend checks.
 
-```text
-frontend/  -> Core + Frontend Web
-server/    -> Core + Backend General (+ runtime specialization when evidenced)
-shared/    -> Core
-```
+Each finding is labeled `VERIFIED` (reproduced), `CODE_PROVEN` (established from code), or `SUSPECTED` (needs more evidence). Performance claims require measurement. Style preferences don't affect the score.
 
-A fullstack repository therefore keeps its real boundaries. Unknown or mixed areas remain explicit until evidence supports a profile; backend rules are never forced onto frontend code.
+## Get started
 
-### Core Software Engineering
-
-- Repository Understanding: existing functions, modules, components, hooks, utilities, services, domain rules, and extension points
-- Design Integrity: responsibility, cohesion, coupling, encapsulation, dependency direction, abstraction quality, and single source of truth
-- Change Discipline: scope proportionality, unnecessary redesign, duplicated responsibility, and unjustified public surface
-- Code Quality: maintainable control/data flow and contracts with concrete consequences—not formatting, naming, or line count
-
-These concepts apply through each language's idioms. Encapsulation may live in functions, modules, closures, components, classes, or data boundaries. Interface absence is not a defect.
-
-### Frontend Web profile
-
-Frontend review adds component/module responsibility, hook/component/client reuse, state ownership, derived and stale state, async races, duplicated fetching, effects/lifecycle, cancellation and cleanup, UI/domain-policy boundaries, and frontend architecture. Missing memoization, ordinary renders, component size, or prop drilling are not findings without demonstrated impact.
-
-### Backend General profile
-
-Backend review preserves strong systems verification: algorithms/data structures, time and space complexity, databases/queries/indexes, transactions/concurrency/locks, network and I/O, timeouts/retries/idempotency, workers/event loops, pools/backpressure, caches/distributed concerns, performance, resource exhaustion, and observability. Technology absence is neutral.
-
-Backend General is language-neutral. Runtime specializations refine the same categories without adding technology credit:
-
-- `spring-backend-v1`: Spring/Spring Boot/JPA/Hibernate proxy, transaction, and fetch semantics
-- `python-backend-v1`: Python asyncio, GIL, WSGI/ASGI workers, coroutine/session lifecycle, and Python ORM behavior
-- `node-backend-v1`: Node.js event loop, Promise/task ownership, streams/backpressure, workers/processes, and Node ORM behavior
-
-Java, Python, and Node backends therefore receive the same Core and Backend categories with runtime-appropriate evidence rules.
-
-## Modes
-
-**Repository Audit** evaluates the current repository area by area. **Change Review** evaluates `base...head`, using unchanged code and pre-change abstractions as context while attributing only introduced or worsened engineering decisions. Neither mode is a conventional PR bug review.
-
-## Evidence model
-
-Every scoring finding follows [`finding.schema.json`](schemas/finding.schema.json), records its area/profile when available, and separates impact from certainty:
-
-- `VERIFIED`: reproduced or measured by a recorded safe method.
-- `CODE_PROVEN`: a concrete code/configuration and call/data path establishes the condition.
-- `SUSPECTED`: material runtime, traffic, data, or environment facts remain missing.
-
-Severity and confidence are independent. Performance claims are never VERIFIED without representative measurement. Claims are classified `VERIFIED`, `PARTIALLY_VERIFIED`, `UNVERIFIED`, or `CONTRADICTED` with evidence.
-
-## Rubrics and scoring
-
-Rubrics are composed, not globally fixed:
-
-- [`core-v1.yaml`](rubrics/core-v1.yaml): all analyzable areas
-- [`frontend-web-v1.yaml`](rubrics/frontend-web-v1.yaml): frontend areas
-- [`backend-v1.yaml`](rubrics/backend-v1.yaml): backend areas
-- [`spring-backend-v1.yaml`](rubrics/spring-backend-v1.yaml): Spring-specific Backend gates
-- [`python-backend-v1.yaml`](rubrics/python-backend-v1.yaml): Python-specific Backend gates
-- [`node-backend-v1.yaml`](rubrics/node-backend-v1.yaml): Node.js-specific Backend gates
-
-Each category can be `N/A` with reason and evidence. Category assessments are keyed by area and profile; applicable weights are normalized to 100. Tests, framework choice, technology count, or documentation keywords do not directly earn points.
-
-## Analysis flow
-
-1. Validate and clone the GitHub repository into `workspaces/<owner>-<repo>/` without executing it.
-2. Recon languages, frameworks, build tools, boundaries, reusable capabilities, claims, and frontend/backend/shared areas.
-3. Run Core verification for every analyzable area.
-4. Run Frontend and Backend specialists only for their assigned areas; apply Spring, Python, or Node gates only to matching backend areas.
-5. Aggregate evidence and merge the same root problem across specialists.
-6. Finalize area/category applicability, evidence confidence, claim status, and scoring.
-7. Generate reports grouped by the profiles actually present.
-
-## Usage
-
-RepoProof is currently an agent-driven verification project, not a standalone analyzer CLI. The shell scripts prepare a target safely; a Codex agent then follows `AGENTS.md`, the skills, and the orchestration protocol to produce the analysis.
-
-### Repository Audit
-
-From the RepoProof root, prepare a GitHub repository:
+You need Bash, Git, and a Codex agent. From the RepoProof root:
 
 ```sh
 ./scripts/audit-target.sh https://github.com/OWNER/REPOSITORY.git
 ```
 
-This validates the URL, clones into `workspaces/<owner>-<repository>/`, and prepares `reports/<repository>/`. It does **not** install dependencies, build, run tests, start containers, or execute target code.
-
-Then ask Codex to perform the audit:
+This clones the target into `workspaces/<owner>-<repository>/` and prepares `reports/<repository>/`. It stops if the workspace already exists, and it does not install or run target code. Then ask Codex:
 
 ```text
 Audit https://github.com/OWNER/REPOSITORY.git in Repository Audit mode.
 Follow AGENTS.md and docs/orchestration.md and generate the final reports.
 ```
 
-If the workspace already exists, the clone helper stops instead of overwriting it. Deliberately move or remove the old workspace before preparing the same repository again.
+Treat targets as untrusted: before running their builds or tests, follow the execution rules in [AGENTS.md](AGENTS.md). For **Change Review**, give a prepared workspace and explicit base and head refs; only introduced or materially worsened decisions are scored. See [docs/orchestration.md](docs/orchestration.md).
 
-### Change Review
+Reports land in `reports/<repository>/`: `summary.md`, `findings.md`, `scorecard.json`, `evidence.json`, and `repository-context.json`.
 
-Provide a prepared repository and an explicit comparison range:
+## Documentation
 
-```text
-Run RepoProof Change Review for workspaces/OWNER-REPOSITORY.
-Base: main
-Head: feature/payment
-Evaluate introduced or worsened engineering decisions, not general PR bugs.
-```
+- [Agent principles and execution rules](AGENTS.md)
+- [Analysis order, profiles, report contracts](docs/orchestration.md)
+- [Rubrics](rubrics) · [Schemas](schemas)
+- [Fixture regression](fixtures/README.md) · [Real-repository calibration](calibration/README.md)
 
-Commit SHAs can be used instead of branch names. Change Review records the base, head, merge base, diff, changed files, and pre-change capabilities before specialist verification.
+## License
 
-### Fixture regression
-
-Run all checked-in fixture contracts:
-
-```sh
-./scripts/run-fixtures.sh
-```
-
-To compare newly generated fixture projections:
-
-```sh
-./scripts/run-fixtures.sh --results <results-directory>
-```
-
-The supplied directory must contain `<fixture-name>/regression.yaml`. The harness checks required and forbidden findings, profiles, categories, confidence, verification levels, claim status, and unexpected findings.
-
-### Outputs
-
-Successful audits write:
-
-```text
-reports/<repository>/
-├── repository-context.json
-├── summary.md
-├── findings.md
-├── scorecard.json
-└── evidence.json
-```
-
-The normative execution contract is [`docs/orchestration.md`](docs/orchestration.md). Specialists share [`repository-context.schema.json`](schemas/repository-context.schema.json) and do not independently rediscover the whole repository.
-
-## Security
-
-Targets are untrusted. Clone is permission to read, not to execute wrappers, package lifecycle scripts, build plugins/tasks, Makefiles, containers, migrations, tests, binaries, or applications. Inspect first; execute only a stated hypothesis through reviewed commands and safe isolation. Missing build, database, cache, container, secret, or environment prerequisites do not stop static verification and never turn a finding into VERIFIED.
-
-## Regression and calibration
-
-Fixtures cover Core, Spring Backend, Python Backend, Node.js Backend, and profile-routing negative controls. They verify blocking I/O, session/cancellation lifecycle, event-loop CPU blocking, Promise ownership, stream backpressure, and valid sync/async counterexamples. Run `scripts/run-fixtures.sh`; Frontend fixtures can be added incrementally without changing the harness.
-
-Real-repository calibration uses pinned commits and human finding dispositions, never “correct scores.” See [`calibration/README.md`](calibration/README.md).
-
-## Non-goals
-
-RepoProof does not impose one architecture on all repositories, reward abstractions or technologies by existence, apply Java rules to frontend code, reduce frontend review to lint, weaken backend systems analysis, or recommend repository-wide redesign for a local problem.
+No LICENSE file yet; license terms need confirmation.
